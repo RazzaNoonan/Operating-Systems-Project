@@ -1,0 +1,64 @@
+package ProjectPackage;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.io.PrintWriter;
+//import java.util.Date;
+//import java.util.Random;
+
+
+public class Server {
+	private static String[] names = {"Wily", "Felix", "Carlsbad", "Hobob"};
+	private static String[] adjs = {"the gentle", "the un-gentle", "the overwrought", "the urbane"};
+	private static final int PORT = 9090;
+	
+	public static void main(String [] args) throws IOException{
+		try (ServerSocket listener = new ServerSocket(PORT)) {
+			System.out.println("[SERVER] Waiting for client connection...");
+			//method for listening socket server to make a connection
+			Socket client = listener.accept();
+			System.out.println("[SERVER]  Connected to client!");
+			
+			//make a print writer to send information to the client
+			PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+			
+			//Server read in what we send
+			BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			
+			
+			try{
+				while(true) {
+					//Whatever command the client sends read in variable called request
+					String request = in.readLine();
+					if(request.contains("name"))
+					{
+						out.println( getRandomName() );
+					}
+					else
+					{
+						out.println("type 'tell me a name' to get a random name");
+					}
+				}
+				
+			} finally {
+			
+			out.close();
+			in.close();
+			}
+		}
+		
+	}
+
+	
+	
+	public static String getRandomName() {
+		String name = names[(int)(Math.random()*names.length)];
+		String adj = adjs[(int)(Math.random()*adjs.length)];
+		return name + " " + adj;
+	}
+	
+	
+}
